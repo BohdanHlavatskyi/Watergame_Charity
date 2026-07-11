@@ -496,15 +496,46 @@ function createTrafficElement(scene, type, direction = 1, laneIndex = 0) {
   element.style.setProperty('--traffic-glass', variant.glass);
 
   if (type === 'car') {
+    const bodyPath = variant.id === 'coupe'
+      ? 'M22 38L30 20L48 14L75 14L92 22L97 37L93 47L76 50L46 50L24 50L15 47Z'
+      : variant.id === 'suv'
+        ? 'M20 39L28 22L42 16L75 16L89 22L97 36L97 45L91 50L74 52L46 52L24 50L16 45Z'
+        : variant.id === 'pickup'
+          ? 'M18 39L24 22L39 14L78 14L94 22L100 36L100 46L92 50L74 51L44 51L22 50L12 46Z'
+          : 'M20 38L28 20L46 14L74 14L91 20L98 37L94 47L77 50L44 50L22 50L14 47Z';
+    const roofPath = variant.id === 'coupe'
+      ? 'M32 23L48 18L72 18L86 23L80 30L56 30L38 30Z'
+      : variant.id === 'suv'
+        ? 'M34 22L44 18L74 18L85 23L80 30L48 30L32 30Z'
+        : variant.id === 'pickup'
+          ? 'M34 22L44 18L74 18L86 23L83 30L44 30L32 30Z'
+          : 'M34 22L46 18L74 18L86 23L80 30L46 30L34 30Z';
+    const windowPath = variant.id === 'coupe'
+      ? 'M39 23L55 20L69 20L80 24L72 29L47 29Z'
+      : variant.id === 'suv'
+        ? 'M39 22L48 19L72 19L80 24L73 30L43 30Z'
+        : variant.id === 'pickup'
+          ? 'M38 22L48 19L72 19L82 24L76 30L44 30Z'
+          : 'M40 22L56 18L72 18L80 24L72 30L44 30Z';
+    const wheelCx = variant.id === 'pickup' ? 34 : 34;
+    const wheelCy = 49;
+
     element.innerHTML = `
-      <div class="traffic__body">
-        <span class="traffic__hood"></span>
-        <span class="traffic__trunk"></span>
-        <span class="traffic__glass traffic__glass--front"></span>
-        <span class="traffic__glass traffic__glass--rear"></span>
-      </div>
-      <span class="traffic__wheel traffic__wheel--front"></span>
-      <span class="traffic__wheel traffic__wheel--rear"></span>
+      <div class="traffic__shadow"></div>
+      <svg class="traffic__art" viewBox="0 0 112 56" xmlns="http://www.w3.org/2000/svg">
+        <path class="traffic__car-body" d="${bodyPath}" />
+        <path class="traffic__car-highlight" d="M28 34L40 24L70 24L84 31L76 38L44 38Z" />
+        <path class="traffic__car-roof" d="${roofPath}" />
+        <path class="traffic__car-window" d="${windowPath}" />
+        <path class="traffic__car-door" d="M44 30L44 42L72 42L72 30Z" />
+        <path class="traffic__car-bumper" d="M12 44L12 47L18 49L22 49L22 44Z" />
+        <path class="traffic__car-bumper traffic__car-bumper--rear" d="M92 44L92 47L86 49L82 49L82 44Z" />
+        <path class="traffic__car-grille" d="M54 41L66 41L66 44L54 44Z" />
+        <path class="traffic__car-light traffic__car-light--front" d="M18 40L20 40L20 43L18 43Z" />
+        <path class="traffic__car-light traffic__car-light--rear" d="M86 40L88 40L88 43L86 43Z" />
+        <circle class="traffic__wheel traffic__wheel--rear" cx="34" cy="49" r="10" />
+        <circle class="traffic__wheel traffic__wheel--front" cx="78" cy="49" r="10" />
+      </svg>
     `;
     const laneOffset = (direction > 0 ? -1 : 1) * (7 + laneIndex * 5);
     element.trafficState = {
