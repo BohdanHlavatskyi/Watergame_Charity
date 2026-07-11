@@ -18,11 +18,25 @@ const END_THRESHOLD = 56;
 const CORRIDOR_THRESHOLD = 42;
 const FAILURE_LIMIT = 3;
 
+const carVariants = [
+  { id: 'sedan', color: '#ff7b59', accent: '#c93d3a', glass: '#8fc7ea' },
+  { id: 'coupe', color: '#4f8cff', accent: '#2348b2', glass: '#9ed9f7' },
+  { id: 'suv', color: '#f1b24a', accent: '#a65f1d', glass: '#8ecbf2' },
+  { id: 'pickup', color: '#3fcf7a', accent: '#117d49', glass: '#9fdcf4' },
+];
+
+const shipVariants = [
+  { id: 'cargo', color: '#d8e4ef', accent: '#6c7f8f', glass: '#4b5a69' },
+  { id: 'tanker', color: '#f4f7fb', accent: '#7d94aa', glass: '#465766' },
+  { id: 'yacht', color: '#ffdf8c', accent: '#a95a1f', glass: '#8cc8ef' },
+  { id: 'ferry', color: '#6bc3ff', accent: '#296eb0', glass: '#d7eefc' },
+];
+
 const scenes = [
   {
     id: 'lagoon',
     name: 'Lagoon Preserve',
-    hint: 'Trace the safe channel across the turquoise inlet, then clear the floating cans.',
+    hint: 'Trace the safe channel along the inland shore, then clear the floating cans.',
     sky: ['#9fe8ff', '#5ebdf0', '#1b4b7d'],
     water: '#1198d0',
     waterDeep: '#085984',
@@ -35,16 +49,32 @@ const scenes = [
     ],
     waterPath: 'M0 336 C102 272, 188 252, 284 276 C366 296, 428 340, 528 350 C657 363, 764 303, 874 319 C931 327, 966 350, 1000 372 L1000 700 L0 700 Z',
     shorePath: 'M0 304 C108 252, 182 236, 286 253 C375 268, 428 309, 534 319 C651 331, 755 279, 864 294 C920 301, 964 323, 1000 344',
+    roadPath: 'M0 180 C110 154, 220 144, 326 150 C430 156, 526 180, 632 188 C736 196, 830 184, 932 164 C967 156, 984 152, 1000 148',
+    roadTrack: [
+      [0, 180],
+      [110, 154],
+      [220, 144],
+      [326, 150],
+      [430, 156],
+      [526, 180],
+      [632, 188],
+      [736, 196],
+      [830, 184],
+      [932, 164],
+      [1000, 148],
+    ],
     decorPath: 'M0 250 C110 228, 180 210, 286 224 C380 238, 460 287, 549 294 C677 305, 765 259, 866 272 C926 279, 968 299, 1000 314 L1000 0 L0 0 Z',
     track: [
-      [126, 426],
-      [210, 388],
-      [308, 360],
-      [420, 347],
-      [545, 352],
-      [654, 364],
-      [758, 391],
-      [848, 422],
+      [20, 244],
+      [132, 218],
+      [244, 206],
+      [356, 210],
+      [468, 224],
+      [580, 240],
+      [692, 236],
+      [804, 244],
+      [916, 258],
+      [980, 272],
     ],
     collectibles: [
       { x: 18, y: 60 },
@@ -58,7 +88,7 @@ const scenes = [
   {
     id: 'delta',
     name: 'Forest Delta',
-    hint: 'Guide the blue line between the reeds and keep an eye on the drifting spill.',
+    hint: 'Guide the blue line along the reed-lined shore and keep the spill away from the bank.',
     sky: ['#b7f0ff', '#73c6ff', '#204d87'],
     water: '#0fa4d9',
     waterDeep: '#0d5b8b',
@@ -71,16 +101,32 @@ const scenes = [
     ],
     waterPath: 'M0 424 C76 377, 158 343, 252 334 C347 324, 420 352, 494 377 C584 407, 671 422, 770 410 C867 398, 935 363, 1000 320 L1000 700 L0 700 Z',
     shorePath: 'M0 387 C83 343, 161 312, 252 304 C345 296, 423 322, 496 347 C588 378, 675 392, 772 381 C866 370, 933 339, 1000 299',
+    roadPath: 'M0 198 C96 174, 198 166, 300 176 C396 186, 512 214, 614 214 C720 214, 812 190, 912 180 C948 176, 980 172, 1000 168',
+    roadTrack: [
+      [0, 198],
+      [96, 174],
+      [198, 166],
+      [300, 176],
+      [396, 186],
+      [512, 214],
+      [614, 214],
+      [720, 214],
+      [812, 190],
+      [912, 180],
+      [1000, 168],
+    ],
     decorPath: 'M0 240 C96 258, 188 224, 272 209 C361 193, 446 206, 529 222 C641 246, 744 226, 844 206 C914 191, 965 186, 1000 192 L1000 0 L0 0 Z',
     track: [
-      [118, 472],
-      [208, 434],
-      [304, 409],
-      [408, 395],
-      [522, 398],
-      [633, 413],
-      [744, 435],
-      [842, 462],
+      [22, 280],
+      [134, 256],
+      [246, 238],
+      [358, 226],
+      [470, 220],
+      [582, 228],
+      [694, 244],
+      [806, 262],
+      [918, 280],
+      [978, 296],
     ],
     collectibles: [
       { x: 21, y: 70 },
@@ -107,16 +153,32 @@ const scenes = [
     ],
     waterPath: 'M0 326 C84 290, 152 270, 227 280 C294 289, 343 322, 406 358 C479 400, 560 434, 649 439 C750 444, 846 415, 932 382 C968 367, 989 354, 1000 347 L1000 700 L0 700 Z',
     shorePath: 'M0 292 C84 258, 155 241, 230 249 C301 257, 347 289, 411 325 C486 368, 561 399, 649 405 C752 412, 846 385, 936 353 C971 340, 990 329, 1000 321',
+    roadPath: 'M0 186 C102 162, 208 154, 310 164 C412 174, 514 198, 620 202 C728 206, 822 188, 922 172 C956 164, 984 158, 1000 156',
+    roadTrack: [
+      [0, 186],
+      [102, 162],
+      [208, 154],
+      [310, 164],
+      [412, 174],
+      [514, 198],
+      [620, 202],
+      [728, 206],
+      [822, 188],
+      [922, 172],
+      [1000, 156],
+    ],
     decorPath: 'M0 248 C90 222, 180 217, 263 225 C354 234, 437 214, 512 185 C619 144, 735 131, 845 158 C920 176, 970 196, 1000 210 L1000 0 L0 0 Z',
     track: [
-      [120, 414],
-      [214, 387],
-      [312, 373],
-      [419, 376],
-      [533, 390],
-      [637, 406],
-      [744, 418],
-      [850, 432],
+      [18, 232],
+      [130, 214],
+      [242, 202],
+      [354, 198],
+      [466, 208],
+      [578, 224],
+      [690, 240],
+      [802, 254],
+      [914, 268],
+      [982, 282],
     ],
     collectibles: [
       { x: 16, y: 61 },
@@ -126,6 +188,110 @@ const scenes = [
     ],
     hazard: { x: 64, y: 63 },
     baseReward: 14,
+  },
+  {
+    id: 'marsh',
+    name: 'Reed Marsh',
+    hint: 'Follow the quiet shore path above the marsh edge and keep the barrier clear of the wetland.',
+    sky: ['#c8f4ff', '#7ed6f4', '#2b5f8a'],
+    water: '#18a2d4',
+    waterDeep: '#0f5c82',
+    land: '#9dc58d',
+    landDeep: '#5d8564',
+    sun: { x: 210, y: 152, r: 36 },
+    clouds: [
+      { x: 738, y: 118, w: 124, h: 40 },
+      { x: 370, y: 92, w: 104, h: 32 },
+    ],
+    waterPath: 'M0 368 C92 328, 172 296, 256 308 C336 319, 404 360, 484 372 C576 387, 668 382, 760 354 C835 332, 916 315, 1000 332 L1000 700 L0 700 Z',
+    shorePath: 'M0 332 C92 294, 173 268, 257 280 C339 292, 407 332, 486 344 C578 359, 668 354, 760 326 C835 304, 917 286, 1000 304',
+    roadPath: 'M0 174 C104 152, 214 144, 320 152 C432 160, 544 182, 646 188 C748 194, 838 182, 938 168 C970 162, 990 158, 1000 154',
+    roadTrack: [
+      [0, 174],
+      [104, 152],
+      [214, 144],
+      [320, 152],
+      [432, 160],
+      [544, 182],
+      [646, 188],
+      [748, 194],
+      [838, 182],
+      [938, 168],
+      [1000, 154],
+    ],
+    decorPath: 'M0 226 C96 244, 186 214, 276 198 C372 181, 457 196, 542 218 C640 242, 746 226, 846 196 C914 178, 970 174, 1000 180 L1000 0 L0 0 Z',
+    track: [
+      [20, 250],
+      [132, 226],
+      [244, 212],
+      [356, 204],
+      [468, 208],
+      [580, 222],
+      [692, 238],
+      [804, 252],
+      [916, 268],
+      [980, 278],
+    ],
+    collectibles: [
+      { x: 20, y: 62 },
+      { x: 34, y: 54 },
+      { x: 58, y: 50 },
+      { x: 80, y: 64 },
+    ],
+    hazard: { x: 68, y: 44 },
+    baseReward: 12,
+  },
+  {
+    id: 'cove',
+    name: 'Cedar Cove',
+    hint: 'Trace the shoreward barrier above the quiet cove and complete the last protective loop.',
+    sky: ['#ffd7b3', '#8fb3ff', '#193b67'],
+    water: '#1f93d8',
+    waterDeep: '#0b517f',
+    land: '#d4c08a',
+    landDeep: '#9a7349',
+    sun: { x: 788, y: 166, r: 42 },
+    clouds: [
+      { x: 214, y: 114, w: 124, h: 38 },
+      { x: 520, y: 100, w: 148, h: 40 },
+    ],
+    waterPath: 'M0 342 C84 306, 160 284, 240 292 C316 300, 384 338, 458 352 C539 368, 620 368, 706 346 C782 326, 858 308, 1000 320 L1000 700 L0 700 Z',
+    shorePath: 'M0 308 C90 274, 166 250, 240 260 C318 270, 386 306, 460 320 C542 336, 621 336, 706 314 C782 294, 862 276, 1000 288',
+    roadPath: 'M0 176 C108 156, 220 150, 332 158 C444 166, 568 190, 682 196 C768 200, 856 186, 938 170 C970 164, 988 160, 1000 156',
+    roadTrack: [
+      [0, 176],
+      [108, 156],
+      [220, 150],
+      [332, 158],
+      [444, 166],
+      [568, 190],
+      [682, 196],
+      [768, 200],
+      [856, 186],
+      [938, 170],
+      [1000, 156],
+    ],
+    decorPath: 'M0 236 C94 208, 176 200, 258 208 C346 217, 430 198, 510 174 C621 144, 740 136, 850 164 C920 182, 970 198, 1000 210 L1000 0 L0 0 Z',
+    track: [
+      [20, 246],
+      [132, 222],
+      [244, 210],
+      [356, 204],
+      [468, 210],
+      [580, 224],
+      [692, 240],
+      [804, 256],
+      [916, 270],
+      [980, 280],
+    ],
+    collectibles: [
+      { x: 18, y: 58 },
+      { x: 32, y: 52 },
+      { x: 56, y: 46 },
+      { x: 80, y: 60 },
+    ],
+    hazard: { x: 64, y: 58 },
+    baseReward: 16,
   },
 ];
 
@@ -211,6 +377,19 @@ function formatScore(value) {
   return Math.max(0, Math.round(value));
 }
 
+function getCollectiblePositions(scene) {
+  const anchors = [1, 3, 5, 7];
+  return anchors
+    .filter((index) => index < scene.track.length)
+    .map((index) => {
+      const [x, y] = scene.track[index];
+      return {
+        x: (x / VIEWBOX_WIDTH) * 100,
+        y: (y / VIEWBOX_HEIGHT) * 100,
+      };
+    });
+}
+
 function showBubble(message, x, y, kind = 'gain') {
   const bubble = document.createElement('div');
   bubble.className = `float-label float-label--${kind}`;
@@ -250,6 +429,116 @@ function createSvgNode(tagName, attributes = {}) {
     node.setAttribute(attribute, String(value));
   }
   return node;
+}
+
+function getRoadPoint(roadTrack, progress, laneOffset = 0) {
+  if (!roadTrack || roadTrack.length < 2) {
+    return { x: 0, y: 0, angle: 0 };
+  }
+
+  const clampedProgress = clamp(progress, 0, 1);
+  let totalLength = 0;
+  const segments = [];
+
+  for (let index = 0; index < roadTrack.length - 1; index += 1) {
+    const startPoint = { x: roadTrack[index][0], y: roadTrack[index][1] };
+    const endPoint = { x: roadTrack[index + 1][0], y: roadTrack[index + 1][1] };
+    const segmentLength = distance(startPoint, endPoint);
+    segments.push({ startPoint, endPoint, segmentLength, startDistance: totalLength });
+    totalLength += segmentLength;
+  }
+
+  const targetDistance = clampedProgress * totalLength;
+  let segment = segments[0];
+  let segmentProgress = 0;
+
+  for (const currentSegment of segments) {
+    if (targetDistance <= currentSegment.startDistance + currentSegment.segmentLength) {
+      segment = currentSegment;
+      segmentProgress = (targetDistance - currentSegment.startDistance) / currentSegment.segmentLength;
+      break;
+    }
+  }
+
+  const startPoint = segment.startPoint;
+  const endPoint = segment.endPoint;
+  const x = startPoint.x + (endPoint.x - startPoint.x) * segmentProgress;
+  const y = startPoint.y + (endPoint.y - startPoint.y) * segmentProgress;
+  const tangentX = endPoint.x - startPoint.x;
+  const tangentY = endPoint.y - startPoint.y;
+  const magnitude = Math.hypot(tangentX, tangentY) || 1;
+  const normalX = -tangentY / magnitude;
+  const normalY = tangentX / magnitude;
+
+  return {
+    x: x + normalX * laneOffset,
+    y: y + normalY * laneOffset,
+    angle: Math.atan2(tangentY, tangentX) * (180 / Math.PI),
+  };
+}
+
+function getWaterPoint(progress, baseY, amplitude, direction) {
+  const normalized = clamp(progress, 0, 1);
+  const xPercent = normalized * 100;
+  const yPercent = baseY + Math.sin(normalized * Math.PI * 2) * amplitude;
+  const angle = Math.sin(normalized * Math.PI * 2) * 6 * (direction > 0 ? 1 : -1);
+  return { xPercent, yPercent, angle };
+}
+
+function createTrafficElement(scene, type, direction = 1, laneIndex = 0) {
+  const variants = type === 'car' ? carVariants : shipVariants;
+  const variant = variants[Math.floor(Math.random() * variants.length)];
+  const element = document.createElement('div');
+  element.className = `traffic traffic--${type} traffic--${type}--${variant.id}`;
+  element.setAttribute('aria-hidden', 'true');
+  element.style.setProperty('--traffic-color', variant.color);
+  element.style.setProperty('--traffic-accent', variant.accent);
+  element.style.setProperty('--traffic-glass', variant.glass);
+
+  if (type === 'car') {
+    element.innerHTML = `
+      <div class="traffic__body">
+        <span class="traffic__hood"></span>
+        <span class="traffic__trunk"></span>
+        <span class="traffic__glass traffic__glass--front"></span>
+        <span class="traffic__glass traffic__glass--rear"></span>
+      </div>
+      <span class="traffic__wheel traffic__wheel--front"></span>
+      <span class="traffic__wheel traffic__wheel--rear"></span>
+    `;
+    const laneOffset = (direction > 0 ? -1 : 1) * (7 + laneIndex * 5);
+    element.trafficState = {
+      roadTrack: scene.roadTrack,
+      progress: direction > 0 ? laneIndex * 0.12 : 1 - laneIndex * 0.14,
+      direction,
+      speed: 0.07 + Math.random() * 0.02 + laneIndex * 0.004,
+      laneOffset,
+    };
+    element.style.left = '0%';
+    element.style.top = '0%';
+  } else {
+    element.innerHTML = `
+      <div class="traffic__hull">
+        <span class="traffic__deck"></span>
+        <span class="traffic__bridge"></span>
+        <span class="traffic__mast"></span>
+        <span class="traffic__sail"></span>
+      </div>
+      <span class="traffic__wake"></span>
+    `;
+    const baseY = 54 + Math.random() * 10;
+    element.trafficState = {
+      progress: direction > 0 ? 0 : 1,
+      direction,
+      speed: 0.045 + Math.random() * 0.015,
+      baseY,
+      amplitude: 1.4 + Math.random() * 1.6,
+    };
+    element.style.left = '0%';
+    element.style.top = '0%';
+  }
+
+  return element;
 }
 
 function createSceneCard(scene, index) {
@@ -366,6 +655,31 @@ function createSceneCard(scene, index) {
     'stroke-linecap': 'round',
   }));
 
+  sceneSvg.appendChild(createSvgNode('path', {
+    d: scene.roadPath,
+    fill: 'none',
+    stroke: 'rgba(112, 70, 34, 0.95)',
+    'stroke-width': 44,
+    'stroke-linecap': 'round',
+  }));
+
+  sceneSvg.appendChild(createSvgNode('path', {
+    d: scene.roadPath,
+    fill: 'none',
+    stroke: 'rgba(231, 191, 111, 0.96)',
+    'stroke-width': 24,
+    'stroke-linecap': 'round',
+  }));
+
+  sceneSvg.appendChild(createSvgNode('path', {
+    d: scene.roadPath,
+    fill: 'none',
+    stroke: 'rgba(255, 255, 255, 0.62)',
+    'stroke-width': 3,
+    'stroke-dasharray': '16 14',
+    'stroke-linecap': 'round',
+  }));
+
   const shine = createSvgNode('path', {
     d: scene.trackToShine || scene.track.map((point, pointIndex) => `${pointIndex === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`).join(' '),
     fill: 'none',
@@ -384,7 +698,9 @@ function createSceneCard(scene, index) {
     'letter-spacing': '0.08em',
   })).textContent = 'PROTECT THE BLUE ZONE';
 
-  for (const collectible of scene.collectibles) {
+  const collectibleData = getCollectiblePositions(scene);
+
+  for (const collectible of collectibleData) {
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'can is-busy';
@@ -406,30 +722,22 @@ function createSceneCard(scene, index) {
     collectiblesLayer.appendChild(button);
   }
 
-  const hazard = document.createElement('button');
-  hazard.type = 'button';
-  hazard.className = 'hazard';
-  hazard.setAttribute('aria-label', 'Pollution slick. Click to remove and avoid losing score.');
-  hazard.style.left = `${scene.hazard.x}%`;
-  hazard.style.top = `${scene.hazard.y}%`;
-  hazard.style.animationDelay = `${0.6 + Math.random() * 0.8}s`;
-  hazard.addEventListener('click', () => {
-    if (hazard.classList.contains('is-removed')) {
-      return;
-    }
-    hazard.classList.add('is-removed');
-    const rect = hazard.getBoundingClientRect();
-    award(-2, 0, rect.left + rect.width / 2, rect.top - 6, '-2');
-    pulseStatus('Spill blocked. Good reaction. Keep tracing the safe line.');
-  });
-  hazardsLayer.appendChild(hazard);
+  const carCount = 1 + Math.floor(Math.random() * 3);
+  for (let carIndex = 0; carIndex < carCount; carIndex += 1) {
+    hazardsLayer.appendChild(createTrafficElement(scene, 'car', carIndex === 0 ? 1 : -1, carIndex));
+  }
+
+  const shipCount = 1 + Math.floor(Math.random() * 3);
+  for (let shipIndex = 0; shipIndex < shipCount; shipIndex += 1) {
+    hazardsLayer.appendChild(createTrafficElement(scene, 'ship'));
+  }
 
   card.scene = scene;
   card.metrics = metrics;
   card.playerLine = playerLine;
   card.collectiblesLayer = collectiblesLayer;
   card.hazardsLayer = hazardsLayer;
-  card.hazard = hazard;
+  card.hazard = hazardsLayer.firstElementChild;
   card.collectibles = Array.from(collectiblesLayer.querySelectorAll('.can'));
   card.progress = 0;
   card.error = 0;
@@ -437,6 +745,65 @@ function createSceneCard(scene, index) {
   card.completionTriggered = false;
 
   return card;
+}
+
+function updateTrafficAnimation(deltaSeconds) {
+  const cars = Array.from(document.querySelectorAll('.traffic--car'));
+  cars.forEach((element) => {
+    const state = element.trafficState;
+    if (!state) {
+      return;
+    }
+
+    state.progress += state.direction * state.speed * deltaSeconds;
+    if (state.progress > 1) {
+      state.progress -= 1;
+    }
+    if (state.progress < 0) {
+      state.progress += 1;
+    }
+
+    const point = getRoadPoint(state.roadTrack, state.progress, state.laneOffset);
+    const xPercent = (point.x / VIEWBOX_WIDTH) * 100;
+    const yPercent = (point.y / VIEWBOX_HEIGHT) * 100;
+    element.style.left = `${xPercent}%`;
+    element.style.top = `${yPercent}%`;
+    element.style.transform = `translate(-50%, -50%) rotate(${point.angle}deg) scaleX(${state.direction > 0 ? 1 : -1})`;
+  });
+
+  const ships = Array.from(document.querySelectorAll('.traffic--ship'));
+  ships.forEach((element) => {
+    const state = element.trafficState;
+    if (!state) {
+      return;
+    }
+
+    state.progress += state.direction * state.speed * deltaSeconds;
+    if (state.progress > 1) {
+      state.progress -= 1;
+    }
+    if (state.progress < 0) {
+      state.progress += 1;
+    }
+
+    const point = getWaterPoint(state.progress, state.baseY, state.amplitude, state.direction);
+    element.style.left = `${point.xPercent}%`;
+    element.style.top = `${point.yPercent}%`;
+    element.style.transform = `translate(-50%, -50%) rotate(${point.angle}deg) scaleX(${state.direction > 0 ? 1 : -1})`;
+  });
+}
+
+let lastTrafficFrameTime = 0;
+
+function animateTraffic(timestamp) {
+  if (!lastTrafficFrameTime) {
+    lastTrafficFrameTime = timestamp;
+  }
+
+  const deltaSeconds = (timestamp - lastTrafficFrameTime) / 1000;
+  lastTrafficFrameTime = timestamp;
+  updateTrafficAnimation(deltaSeconds);
+  window.requestAnimationFrame(animateTraffic);
 }
 
 function renderScenes() {
@@ -756,5 +1123,6 @@ playAgainBtn.addEventListener('click', resetRun);
 
 renderScenes();
 updateHUD();
+window.requestAnimationFrame(animateTraffic);
 updateProgress(0);
 pulseStatus('Trace the blue safety line and click the floating cans to collect extra points.');
