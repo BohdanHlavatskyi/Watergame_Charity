@@ -420,97 +420,99 @@ button {
   position: absolute;
   left: var(--traffic-start, 118%);
   top: 22%;
-  width: clamp(34px, 3vw, 44px);
-  height: clamp(18px, 1.9vw, 24px);
+  width: clamp(58px, 4.9vw, 72px);
+  height: clamp(28px, 2.9vw, 34px);
   pointer-events: none;
   z-index: 5;
   transform: translate(-50%, -50%) scaleX(-1);
-  filter: drop-shadow(0 10px 14px rgba(0, 0, 0, 0.24));
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.28));
   transition: opacity 0.2s ease, filter 0.2s ease;
 }
 
-.traffic__body,
+.traffic__shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  width: 84%;
+  height: 9px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.24);
+  filter: blur(3px);
+}
+
+.traffic__art,
 .traffic__hull {
   position: absolute;
   inset: 0;
 }
 
-.traffic__body {
-  border-radius: 18px 22px 16px 16px;
-  background: linear-gradient(135deg, var(--traffic-color), var(--traffic-accent));
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.32), inset 0 -3px 0 rgba(0, 0, 0, 0.16);
+.traffic__art {
+  overflow: visible;
 }
 
-.traffic__hood,
-.traffic__trunk {
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  height: 5px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.28);
+.traffic__car-body {
+  fill: var(--traffic-color);
+  stroke: rgba(0, 0, 0, 0.24);
+  stroke-width: 1.8;
 }
 
-.traffic__hood {
-  top: 6px;
+.traffic__car-highlight {
+  fill: rgba(255, 255, 255, 0.2);
+  stroke: rgba(255, 255, 255, 0.16);
+  stroke-width: 1;
 }
 
-.traffic__trunk {
-  bottom: 6px;
+.traffic__car-roof {
+  fill: rgba(255, 255, 255, 0.18);
+  stroke: rgba(0, 0, 0, 0.12);
+  stroke-width: 1.2;
 }
 
-.traffic__glass {
-  position: absolute;
-  top: 4px;
-  width: 8px;
-  height: 5px;
-  border-radius: 6px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), var(--traffic-glass));
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
+.traffic__car-window {
+  fill: var(--traffic-glass);
+  stroke: rgba(0, 0, 0, 0.14);
+  stroke-width: 1.2;
 }
 
-.traffic__glass--front {
-  left: 12px;
+.traffic__car-door {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.26);
+  stroke-width: 1.2;
 }
 
-.traffic__glass--rear {
-  right: 12px;
+.traffic__car-bumper {
+  fill: rgba(16, 20, 24, 0.9);
+}
+
+.traffic__car-bumper--rear {
+  fill: rgba(16, 20, 24, 0.82);
+}
+
+.traffic__car-grille {
+  fill: rgba(9, 12, 16, 0.74);
+}
+
+.traffic__car-light {
+  fill: rgba(255, 255, 255, 0.92);
+}
+
+.traffic__car-light--rear {
+  fill: rgba(255, 92, 78, 0.95);
 }
 
 .traffic__wheel {
-  position: absolute;
-  bottom: -3px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #101820;
-  box-shadow: inset 0 2px 0 rgba(255, 255, 255, 0.18);
-}
-
-.traffic__wheel--front {
-  right: 10px;
+  fill: #10141a;
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1.2;
 }
 
 .traffic__wheel--rear {
-  left: 10px;
+  transform-origin: 34px 49px;
 }
 
-.traffic--car--sedan .traffic__body {
-  border-radius: 18px 20px 16px 16px;
-}
-
-.traffic--car--coupe .traffic__body {
-  border-radius: 20px 26px 16px 16px;
-}
-
-.traffic--car--suv .traffic__body {
-  border-radius: 20px 24px 18px 18px;
-  inset: 2px 8px 2px 12px;
-}
-
-.traffic--car--pickup .traffic__body {
-  border-radius: 16px 26px 16px 16px;
-  inset: 2px 10px 2px 10px;
+.traffic__wheel--front {
+  transform-origin: 78px 49px;
 }
 
 .traffic__hull {
