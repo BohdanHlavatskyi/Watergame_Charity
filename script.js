@@ -19,17 +19,23 @@ const CORRIDOR_THRESHOLD = 42;
 const FAILURE_LIMIT = 3;
 
 const carVariants = [
-  { id: 'sedan', color: '#ff7b59', accent: '#c93d3a', glass: '#8fc7ea' },
-  { id: 'coupe', color: '#4f8cff', accent: '#2348b2', glass: '#9ed9f7' },
-  { id: 'suv', color: '#f1b24a', accent: '#a65f1d', glass: '#8ecbf2' },
-  { id: 'pickup', color: '#3fcf7a', accent: '#117d49', glass: '#9fdcf4' },
+  { id: 'sedan', color: '#ff7b59', accent: '#c93d3a', glass: '#8fc7ea', bodyPath: 'M20 38L28 20L46 14L74 14L91 20L98 37L94 47L77 50L44 50L22 50L14 47Z', roofPath: 'M34 22L46 18L74 18L86 23L80 30L46 30L34 30Z', windowPath: 'M40 22L56 18L72 18L80 24L72 30L44 30Z', doorPath: 'M44 30L44 42L72 42L72 30Z' },
+  { id: 'coupe', color: '#4f8cff', accent: '#2348b2', glass: '#9ed9f7', bodyPath: 'M24 40L32 20L50 14L76 14L93 22L100 37L95 47L77 50L46 50L22 49L14 46Z', roofPath: 'M32 23L48 18L72 18L86 23L80 30L56 30L38 30Z', windowPath: 'M39 23L55 20L69 20L80 24L72 29L47 29Z', doorPath: 'M46 29L46 42L70 42L70 29Z' },
+  { id: 'suv', color: '#f1b24a', accent: '#a65f1d', glass: '#8ecbf2', bodyPath: 'M20 40L26 22L42 16L74 16L90 22L98 37L96 48L80 51L44 51L18 48Z', roofPath: 'M34 22L44 18L74 18L85 23L80 30L48 30L32 30Z', windowPath: 'M39 22L48 19L72 19L80 24L73 30L43 30Z', doorPath: 'M44 30L44 43L72 43L72 30Z' },
+  { id: 'pickup', color: '#3fcf7a', accent: '#117d49', glass: '#9fdcf4', bodyPath: 'M18 40L24 20L40 14L82 14L97 22L101 38L96 48L82 50L42 50L22 50L14 47Z', roofPath: 'M34 22L44 18L74 18L86 23L83 30L44 30L32 30Z', windowPath: 'M38 22L48 19L72 19L82 24L76 30L44 30Z', doorPath: 'M44 30L44 42L72 42L72 30Z' },
+  { id: 'hatchback', color: '#f26192', accent: '#a53463', glass: '#cdeaff', bodyPath: 'M22 38L30 20L50 16L74 16L90 22L97 37L92 46L76 50L46 50L24 49L16 45Z', roofPath: 'M34 22L46 18L72 18L84 24L78 30L46 30L34 30Z', windowPath: 'M40 22L54 19L70 19L78 24L70 30L44 30Z', doorPath: 'M44 30L44 42L70 42L70 30Z' },
+  { id: 'wagon', color: '#7c5cff', accent: '#4a2da8', glass: '#bfe9ff', bodyPath: 'M18 39L27 20L43 14L77 14L92 20L99 34L97 47L80 50L44 50L24 49L15 46Z', roofPath: 'M32 22L44 18L74 18L84 24L80 30L44 30L32 30Z', windowPath: 'M38 22L52 19L70 19L80 24L73 30L42 30Z', doorPath: 'M44 30L44 42L72 42L72 30Z' },
+  { id: 'convertible', color: '#2dc6b8', accent: '#0d6f63', glass: '#d7f2ff', bodyPath: 'M22 40L32 20L50 14L76 14L92 24L98 37L93 47L74 50L46 50L23 50L14 46Z', roofPath: 'M34 22L48 18L72 18L84 24L78 31L48 31L34 31Z', windowPath: 'M40 22L54 20L70 20L78 25L70 31L44 31Z', doorPath: 'M44 31L44 42L70 42L70 31Z' },
+  { id: 'van', color: '#ff9b3f', accent: '#a95811', glass: '#cceeff', bodyPath: 'M16 40L24 20L44 14L80 14L95 20L100 38L95 47L80 50L44 50L24 50L14 46Z', roofPath: 'M32 22L44 18L78 18L90 24L84 31L44 31L32 31Z', windowPath: 'M38 22L50 19L72 19L82 24L74 31L42 31Z', doorPath: 'M44 31L44 42L72 42L72 31Z' },
+  { id: 'sport', color: '#e85d5d', accent: '#8c2023', glass: '#bfe8ff', bodyPath: 'M22 39L32 18L52 12L74 12L91 20L98 36L93 47L76 50L42 50L21 49L14 46Z', roofPath: 'M34 18L48 14L70 14L84 20L78 29L46 29L34 29Z', windowPath: 'M40 18L54 15L68 15L78 21L70 29L44 29Z', doorPath: 'M44 29L44 42L68 42L68 29Z' },
+  { id: 'muscle', color: '#6abf69', accent: '#246a31', glass: '#dff6ff', bodyPath: 'M20 40L28 18L46 12L76 12L92 18L100 36L97 47L79 50L46 50L24 50L14 47Z', roofPath: 'M34 18L48 14L72 14L84 20L80 29L46 29L34 29Z', windowPath: 'M40 18L54 15L70 15L78 21L70 29L44 29Z', doorPath: 'M44 29L44 42L70 42L70 29Z' },
 ];
 
 const shipVariants = [
-  { id: 'cargo', color: '#d8e4ef', accent: '#6c7f8f', glass: '#4b5a69' },
-  { id: 'tanker', color: '#f4f7fb', accent: '#7d94aa', glass: '#465766' },
-  { id: 'yacht', color: '#ffdf8c', accent: '#a95a1f', glass: '#8cc8ef' },
-  { id: 'ferry', color: '#6bc3ff', accent: '#296eb0', glass: '#d7eefc' },
+  { id: 'cargo', color: '#d8e4ef', accent: '#6c7f8f', glass: '#4b5a69', hullPath: 'M14 42L22 30L40 24L72 24L90 30L98 42L90 46L72 50L40 50L22 46Z', deckPath: 'M24 34L38 30L72 30L84 34L78 40L40 40Z', mastPath: 'M46 18L46 34', sailPath: 'M46 18L68 18L46 32Z', wakePath: 'M12 46C20 44 30 44 42 46C54 48 66 48 78 46C88 44 96 44 102 46' },
+  { id: 'tanker', color: '#f4f7fb', accent: '#7d94aa', glass: '#465766', hullPath: 'M12 42L20 28L42 22L74 22L94 28L100 42L92 48L76 52L42 52L22 48Z', deckPath: 'M24 32L38 28L74 28L86 32L78 40L38 40Z', mastPath: 'M48 16L48 34', sailPath: 'M48 16L72 16L48 32Z', wakePath: 'M10 46C18 44 28 44 42 46C56 48 68 48 82 46C90 44 97 44 104 46' },
+  { id: 'yacht', color: '#ffdf8c', accent: '#a95a1f', glass: '#8cc8ef', hullPath: 'M14 40L24 28L44 24L72 24L90 28L98 40L86 46L72 50L44 50L24 46Z', deckPath: 'M24 30L40 28L70 28L84 32L74 38L40 38Z', mastPath: 'M44 14L44 32', sailPath: 'M44 14L64 14L44 31Z', wakePath: 'M12 46C20 44 28 44 40 46C52 48 64 48 78 46C86 44 94 44 102 46' },
+  { id: 'ferry', color: '#6bc3ff', accent: '#296eb0', glass: '#d7eefc', hullPath: 'M12 40L20 28L40 22L76 22L96 28L100 40L92 46L74 50L42 50L24 46Z', deckPath: 'M24 30L36 26L76 26L88 30L80 38L34 38Z', mastPath: 'M50 16L50 32', sailPath: 'M50 16L70 16L50 31Z', wakePath: 'M10 46C20 44 32 44 44 46C56 48 68 48 80 46C90 44 98 44 104 46' },
 ];
 
 const scenes = [
@@ -47,34 +53,35 @@ const scenes = [
       { x: 140, y: 120, w: 120, h: 40 },
       { x: 640, y: 98, w: 150, h: 52 },
     ],
-    waterPath: 'M0 336 C102 272, 188 252, 284 276 C366 296, 428 340, 528 350 C657 363, 764 303, 874 319 C931 327, 966 350, 1000 372 L1000 700 L0 700 Z',
-    shorePath: 'M0 304 C108 252, 182 236, 286 253 C375 268, 428 309, 534 319 C651 331, 755 279, 864 294 C920 301, 964 323, 1000 344',
-    roadPath: 'M0 180 C110 154, 220 144, 326 150 C430 156, 526 180, 632 188 C736 196, 830 184, 932 164 C967 156, 984 152, 1000 148',
+    waterPath: 'M0 524 C102 484, 188 454, 284 474 C366 492, 428 530, 528 540 C657 552, 764 494, 874 510 C931 518, 966 536, 1000 550 L1000 700 L0 700 Z',
+    shipWaterPath: 'M0 568 C102 528, 188 498, 284 518 C366 536, 428 574, 528 584 C657 596, 764 538, 874 554 C931 562, 966 580, 1000 594 L1000 700 L0 700 Z',
+    shorePath: 'M0 492 C108 444, 182 428, 286 444 C375 458, 428 500, 534 510 C651 522, 755 470, 864 484 C920 491, 964 510, 1000 530',
+    roadPath: 'M0 150 C110 124, 220 114, 326 120 C430 126, 526 150, 632 158 C736 166, 830 154, 932 134 C967 126, 984 122, 1000 118',
     roadTrack: [
-      [0, 180],
-      [110, 154],
-      [220, 144],
-      [326, 150],
-      [430, 156],
-      [526, 180],
-      [632, 188],
-      [736, 196],
-      [830, 184],
-      [932, 164],
-      [1000, 148],
+      [0, 150],
+      [110, 124],
+      [220, 114],
+      [326, 120],
+      [430, 126],
+      [526, 150],
+      [632, 158],
+      [736, 166],
+      [830, 154],
+      [932, 134],
+      [1000, 118],
     ],
     decorPath: 'M0 250 C110 228, 180 210, 286 224 C380 238, 460 287, 549 294 C677 305, 765 259, 866 272 C926 279, 968 299, 1000 314 L1000 0 L0 0 Z',
     track: [
-      [20, 244],
-      [132, 218],
-      [244, 206],
-      [356, 210],
-      [468, 224],
-      [580, 240],
-      [692, 236],
-      [804, 244],
-      [916, 258],
-      [980, 272],
+      [20, 224],
+      [132, 198],
+      [244, 186],
+      [356, 190],
+      [468, 204],
+      [580, 220],
+      [692, 216],
+      [804, 224],
+      [916, 238],
+      [980, 252],
     ],
     collectibles: [
       { x: 18, y: 60 },
@@ -99,34 +106,35 @@ const scenes = [
       { x: 720, y: 116, w: 144, h: 44 },
       { x: 328, y: 92, w: 116, h: 36 },
     ],
-    waterPath: 'M0 424 C76 377, 158 343, 252 334 C347 324, 420 352, 494 377 C584 407, 671 422, 770 410 C867 398, 935 363, 1000 320 L1000 700 L0 700 Z',
-    shorePath: 'M0 387 C83 343, 161 312, 252 304 C345 296, 423 322, 496 347 C588 378, 675 392, 772 381 C866 370, 933 339, 1000 299',
-    roadPath: 'M0 198 C96 174, 198 166, 300 176 C396 186, 512 214, 614 214 C720 214, 812 190, 912 180 C948 176, 980 172, 1000 168',
+    waterPath: 'M0 528 C76 486, 158 452, 252 444 C347 434, 420 462, 494 486 C584 516, 671 530, 770 518 C867 506, 935 472, 1000 428 L1000 700 L0 700 Z',
+    shipWaterPath: 'M0 570 C76 528, 158 494, 252 486 C347 476, 420 504, 494 528 C584 558, 671 572, 770 560 C867 548, 935 514, 1000 470 L1000 700 L0 700 Z',
+    shorePath: 'M0 496 C83 452, 161 422, 252 414 C345 406, 423 432, 496 456 C588 488, 675 502, 772 492 C866 482, 933 450, 1000 418',
+    roadPath: 'M0 168 C96 144, 198 136, 300 146 C396 156, 512 184, 614 184 C720 184, 812 160, 912 150 C948 146, 980 142, 1000 138',
     roadTrack: [
-      [0, 198],
-      [96, 174],
-      [198, 166],
-      [300, 176],
-      [396, 186],
-      [512, 214],
-      [614, 214],
-      [720, 214],
-      [812, 190],
-      [912, 180],
-      [1000, 168],
+      [0, 168],
+      [96, 144],
+      [198, 136],
+      [300, 146],
+      [396, 156],
+      [512, 184],
+      [614, 184],
+      [720, 184],
+      [812, 160],
+      [912, 150],
+      [1000, 138],
     ],
     decorPath: 'M0 240 C96 258, 188 224, 272 209 C361 193, 446 206, 529 222 C641 246, 744 226, 844 206 C914 191, 965 186, 1000 192 L1000 0 L0 0 Z',
     track: [
-      [22, 280],
-      [134, 256],
-      [246, 238],
-      [358, 226],
-      [470, 220],
-      [582, 228],
-      [694, 244],
-      [806, 262],
-      [918, 280],
-      [978, 296],
+      [22, 260],
+      [134, 236],
+      [246, 218],
+      [358, 206],
+      [470, 200],
+      [582, 208],
+      [694, 224],
+      [806, 242],
+      [918, 260],
+      [978, 276],
     ],
     collectibles: [
       { x: 21, y: 70 },
@@ -151,34 +159,35 @@ const scenes = [
       { x: 204, y: 112, w: 120, h: 40 },
       { x: 512, y: 96, w: 146, h: 42 },
     ],
-    waterPath: 'M0 326 C84 290, 152 270, 227 280 C294 289, 343 322, 406 358 C479 400, 560 434, 649 439 C750 444, 846 415, 932 382 C968 367, 989 354, 1000 347 L1000 700 L0 700 Z',
-    shorePath: 'M0 292 C84 258, 155 241, 230 249 C301 257, 347 289, 411 325 C486 368, 561 399, 649 405 C752 412, 846 385, 936 353 C971 340, 990 329, 1000 321',
-    roadPath: 'M0 186 C102 162, 208 154, 310 164 C412 174, 514 198, 620 202 C728 206, 822 188, 922 172 C956 164, 984 158, 1000 156',
+    waterPath: 'M0 522 C84 486, 152 466, 227 476 C294 485, 343 518, 406 554 C479 596, 560 630, 649 634 C750 639, 846 610, 932 576 C968 561, 989 548, 1000 540 L1000 700 L0 700 Z',
+    shipWaterPath: 'M0 566 C84 530, 152 510, 227 520 C294 529, 343 562, 406 598 C479 640, 560 674, 649 678 C750 683, 846 654, 932 620 C968 605, 989 592, 1000 584 L1000 700 L0 700 Z',
+    shorePath: 'M0 490 C84 456, 155 438, 230 446 C301 454, 347 486, 411 522 C486 564, 561 596, 649 602 C752 609, 846 582, 936 550 C971 537, 990 526, 1000 518',
+    roadPath: 'M0 156 C102 132, 208 124, 310 134 C412 144, 514 168, 620 172 C728 176, 822 158, 922 142 C956 134, 984 128, 1000 126',
     roadTrack: [
-      [0, 186],
-      [102, 162],
-      [208, 154],
-      [310, 164],
-      [412, 174],
-      [514, 198],
-      [620, 202],
-      [728, 206],
-      [822, 188],
-      [922, 172],
-      [1000, 156],
+      [0, 156],
+      [102, 132],
+      [208, 124],
+      [310, 134],
+      [412, 144],
+      [514, 168],
+      [620, 172],
+      [728, 176],
+      [822, 158],
+      [922, 142],
+      [1000, 126],
     ],
     decorPath: 'M0 248 C90 222, 180 217, 263 225 C354 234, 437 214, 512 185 C619 144, 735 131, 845 158 C920 176, 970 196, 1000 210 L1000 0 L0 0 Z',
     track: [
-      [18, 232],
-      [130, 214],
-      [242, 202],
-      [354, 198],
-      [466, 208],
-      [578, 224],
-      [690, 240],
-      [802, 254],
-      [914, 268],
-      [982, 282],
+      [18, 212],
+      [130, 194],
+      [242, 182],
+      [354, 178],
+      [466, 188],
+      [578, 204],
+      [690, 220],
+      [802, 234],
+      [914, 248],
+      [982, 262],
     ],
     collectibles: [
       { x: 16, y: 61 },
@@ -203,34 +212,35 @@ const scenes = [
       { x: 738, y: 118, w: 124, h: 40 },
       { x: 370, y: 92, w: 104, h: 32 },
     ],
-    waterPath: 'M0 368 C92 328, 172 296, 256 308 C336 319, 404 360, 484 372 C576 387, 668 382, 760 354 C835 332, 916 315, 1000 332 L1000 700 L0 700 Z',
-    shorePath: 'M0 332 C92 294, 173 268, 257 280 C339 292, 407 332, 486 344 C578 359, 668 354, 760 326 C835 304, 917 286, 1000 304',
-    roadPath: 'M0 174 C104 152, 214 144, 320 152 C432 160, 544 182, 646 188 C748 194, 838 182, 938 168 C970 162, 990 158, 1000 154',
+    waterPath: 'M0 526 C92 486, 172 454, 256 466 C336 477, 404 518, 484 530 C576 545, 668 540, 760 512 C835 490, 916 473, 1000 490 L1000 700 L0 700 Z',
+    shipWaterPath: 'M0 570 C92 530, 172 498, 256 510 C336 521, 404 562, 484 574 C576 589, 668 584, 760 556 C835 534, 916 517, 1000 534 L1000 700 L0 700 Z',
+    shorePath: 'M0 492 C92 454, 173 428, 257 440 C339 452, 407 492, 486 504 C578 519, 668 514, 760 486 C835 464, 917 446, 1000 462',
+    roadPath: 'M0 144 C104 122, 214 114, 320 122 C432 130, 544 152, 646 158 C748 164, 838 152, 938 138 C970 132, 990 128, 1000 124',
     roadTrack: [
-      [0, 174],
-      [104, 152],
-      [214, 144],
-      [320, 152],
-      [432, 160],
-      [544, 182],
-      [646, 188],
-      [748, 194],
-      [838, 182],
-      [938, 168],
-      [1000, 154],
+      [0, 144],
+      [104, 122],
+      [214, 114],
+      [320, 122],
+      [432, 130],
+      [544, 152],
+      [646, 158],
+      [748, 164],
+      [838, 152],
+      [938, 138],
+      [1000, 124],
     ],
     decorPath: 'M0 226 C96 244, 186 214, 276 198 C372 181, 457 196, 542 218 C640 242, 746 226, 846 196 C914 178, 970 174, 1000 180 L1000 0 L0 0 Z',
     track: [
-      [20, 250],
-      [132, 226],
-      [244, 212],
-      [356, 204],
-      [468, 208],
-      [580, 222],
-      [692, 238],
-      [804, 252],
-      [916, 268],
-      [980, 278],
+      [20, 230],
+      [132, 206],
+      [244, 192],
+      [356, 184],
+      [468, 188],
+      [580, 202],
+      [692, 218],
+      [804, 232],
+      [916, 248],
+      [980, 258],
     ],
     collectibles: [
       { x: 20, y: 62 },
@@ -255,34 +265,35 @@ const scenes = [
       { x: 214, y: 114, w: 124, h: 38 },
       { x: 520, y: 100, w: 148, h: 40 },
     ],
-    waterPath: 'M0 342 C84 306, 160 284, 240 292 C316 300, 384 338, 458 352 C539 368, 620 368, 706 346 C782 326, 858 308, 1000 320 L1000 700 L0 700 Z',
-    shorePath: 'M0 308 C90 274, 166 250, 240 260 C318 270, 386 306, 460 320 C542 336, 621 336, 706 314 C782 294, 862 276, 1000 288',
-    roadPath: 'M0 176 C108 156, 220 150, 332 158 C444 166, 568 190, 682 196 C768 200, 856 186, 938 170 C970 164, 988 160, 1000 156',
+    waterPath: 'M0 516 C84 480, 160 458, 240 466 C316 474, 384 512, 458 526 C539 542, 620 542, 706 520 C782 500, 858 482, 1000 494 L1000 700 L0 700 Z',
+    shipWaterPath: 'M0 560 C84 524, 160 502, 240 510 C316 518, 384 556, 458 570 C539 586, 620 586, 706 564 C782 544, 858 526, 1000 538 L1000 700 L0 700 Z',
+    shorePath: 'M0 482 C90 448, 166 424, 240 434 C318 444, 386 480, 460 494 C542 510, 621 510, 706 488 C782 468, 862 450, 1000 462',
+    roadPath: 'M0 146 C108 126, 220 120, 332 128 C444 136, 568 160, 682 166 C768 170, 856 156, 938 140 C970 134, 988 130, 1000 126',
     roadTrack: [
-      [0, 176],
-      [108, 156],
-      [220, 150],
-      [332, 158],
-      [444, 166],
-      [568, 190],
-      [682, 196],
-      [768, 200],
-      [856, 186],
-      [938, 170],
-      [1000, 156],
+      [0, 146],
+      [108, 126],
+      [220, 120],
+      [332, 128],
+      [444, 136],
+      [568, 160],
+      [682, 166],
+      [768, 170],
+      [856, 156],
+      [938, 140],
+      [1000, 126],
     ],
     decorPath: 'M0 236 C94 208, 176 200, 258 208 C346 217, 430 198, 510 174 C621 144, 740 136, 850 164 C920 182, 970 198, 1000 210 L1000 0 L0 0 Z',
     track: [
-      [20, 246],
-      [132, 222],
-      [244, 210],
-      [356, 204],
-      [468, 210],
-      [580, 224],
-      [692, 240],
-      [804, 256],
-      [916, 270],
-      [980, 280],
+      [20, 226],
+      [132, 202],
+      [244, 190],
+      [356, 184],
+      [468, 190],
+      [580, 204],
+      [692, 220],
+      [804, 236],
+      [916, 250],
+      [980, 260],
     ],
     collectibles: [
       { x: 18, y: 58 },
@@ -371,6 +382,11 @@ function pointsToPath(points) {
     path += ` L ${point[0]} ${point[1]}`;
   }
   return path;
+}
+
+function getRouteTrack(scene) {
+  const offset = scene.routeOffset ?? 0;
+  return scene.track.map(([x, y]) => [x, y + offset]);
 }
 
 function formatScore(value) {
@@ -485,7 +501,7 @@ function getWaterPoint(progress, baseY, amplitude, direction) {
   return { xPercent, yPercent, angle };
 }
 
-function createTrafficElement(scene, type, direction = 1, laneIndex = 0) {
+function createTrafficElement(scene, type, direction = 1, laneIndex = 0, laneSide = 'left') {
   const variants = type === 'car' ? carVariants : shipVariants;
   const variant = variants[Math.floor(Math.random() * variants.length)];
   const element = document.createElement('div');
@@ -496,29 +512,10 @@ function createTrafficElement(scene, type, direction = 1, laneIndex = 0) {
   element.style.setProperty('--traffic-glass', variant.glass);
 
   if (type === 'car') {
-    const bodyPath = variant.id === 'coupe'
-      ? 'M22 38L30 20L48 14L75 14L92 22L97 37L93 47L76 50L46 50L24 50L15 47Z'
-      : variant.id === 'suv'
-        ? 'M20 39L28 22L42 16L75 16L89 22L97 36L97 45L91 50L74 52L46 52L24 50L16 45Z'
-        : variant.id === 'pickup'
-          ? 'M18 39L24 22L39 14L78 14L94 22L100 36L100 46L92 50L74 51L44 51L22 50L12 46Z'
-          : 'M20 38L28 20L46 14L74 14L91 20L98 37L94 47L77 50L44 50L22 50L14 47Z';
-    const roofPath = variant.id === 'coupe'
-      ? 'M32 23L48 18L72 18L86 23L80 30L56 30L38 30Z'
-      : variant.id === 'suv'
-        ? 'M34 22L44 18L74 18L85 23L80 30L48 30L32 30Z'
-        : variant.id === 'pickup'
-          ? 'M34 22L44 18L74 18L86 23L83 30L44 30L32 30Z'
-          : 'M34 22L46 18L74 18L86 23L80 30L46 30L34 30Z';
-    const windowPath = variant.id === 'coupe'
-      ? 'M39 23L55 20L69 20L80 24L72 29L47 29Z'
-      : variant.id === 'suv'
-        ? 'M39 22L48 19L72 19L80 24L73 30L43 30Z'
-        : variant.id === 'pickup'
-          ? 'M38 22L48 19L72 19L82 24L76 30L44 30Z'
-          : 'M40 22L56 18L72 18L80 24L72 30L44 30Z';
-    const wheelCx = variant.id === 'pickup' ? 34 : 34;
-    const wheelCy = 49;
+    const bodyPath = variant.bodyPath || 'M20 38L28 20L46 14L74 14L91 20L98 37L94 47L77 50L44 50L22 50L14 47Z';
+    const roofPath = variant.roofPath || 'M34 22L46 18L74 18L86 23L80 30L46 30L34 30Z';
+    const windowPath = variant.windowPath || 'M40 22L56 18L72 18L80 24L72 30L44 30Z';
+    const doorPath = variant.doorPath || 'M44 30L44 42L72 42L72 30Z';
 
     element.innerHTML = `
       <div class="traffic__shadow"></div>
@@ -527,7 +524,7 @@ function createTrafficElement(scene, type, direction = 1, laneIndex = 0) {
         <path class="traffic__car-highlight" d="M28 34L40 24L70 24L84 31L76 38L44 38Z" />
         <path class="traffic__car-roof" d="${roofPath}" />
         <path class="traffic__car-window" d="${windowPath}" />
-        <path class="traffic__car-door" d="M44 30L44 42L72 42L72 30Z" />
+        <path class="traffic__car-door" d="${doorPath}" />
         <path class="traffic__car-bumper" d="M12 44L12 47L18 49L22 49L22 44Z" />
         <path class="traffic__car-bumper traffic__car-bumper--rear" d="M92 44L92 47L86 49L82 49L82 44Z" />
         <path class="traffic__car-grille" d="M54 41L66 41L66 44L54 44Z" />
@@ -537,25 +534,38 @@ function createTrafficElement(scene, type, direction = 1, laneIndex = 0) {
         <circle class="traffic__wheel traffic__wheel--front" cx="78" cy="49" r="10" />
       </svg>
     `;
-    const laneOffset = (direction > 0 ? -1 : 1) * (7 + laneIndex * 5);
+    const laneOffset = laneSide === 'left' ? -20 : 20;
+    const laneSpacing = 0.24 + Math.random() * 0.08;
+    const initialProgress = direction > 0
+      ? laneIndex * laneSpacing + Math.random() * 0.03
+      : 1 - (laneIndex * laneSpacing + Math.random() * 0.03);
     element.trafficState = {
       roadTrack: scene.roadTrack,
-      progress: direction > 0 ? laneIndex * 0.12 : 1 - laneIndex * 0.14,
+      progress: initialProgress,
       direction,
-      speed: 0.07 + Math.random() * 0.02 + laneIndex * 0.004,
+      speed: 0.06 + Math.random() * 0.012 + laneIndex * 0.002,
       laneOffset,
+      laneSide,
     };
     element.style.left = '0%';
     element.style.top = '0%';
   } else {
+    const hullPath = variant.hullPath || 'M14 42L22 30L40 24L72 24L90 30L98 42L90 46L72 50L40 50L22 46Z';
+    const deckPath = variant.deckPath || 'M24 34L38 30L72 30L84 34L78 40L40 40Z';
+    const mastPath = variant.mastPath || 'M46 18L46 34';
+    const sailPath = variant.sailPath || 'M46 18L68 18L46 32Z';
+    const wakePath = variant.wakePath || 'M12 46C20 44 30 44 42 46C54 48 66 48 78 46C88 44 96 44 102 46';
+
     element.innerHTML = `
-      <div class="traffic__hull">
-        <span class="traffic__deck"></span>
-        <span class="traffic__bridge"></span>
-        <span class="traffic__mast"></span>
-        <span class="traffic__sail"></span>
-      </div>
-      <span class="traffic__wake"></span>
+      <div class="traffic__shadow"></div>
+      <svg class="traffic__art" viewBox="0 0 112 56" xmlns="http://www.w3.org/2000/svg">
+        <path class="traffic__ship-hull" d="${hullPath}" />
+        <path class="traffic__ship-deck" d="${deckPath}" />
+        <path class="traffic__ship-mast" d="${mastPath}" />
+        <path class="traffic__ship-sail" d="${sailPath}" />
+        <path class="traffic__ship-window" d="M42 28L50 28L50 34L42 34Z" />
+        <path class="traffic__ship-wake" d="${wakePath}" />
+      </svg>
     `;
     const baseY = 54 + Math.random() * 10;
     element.trafficState = {
@@ -573,7 +583,8 @@ function createTrafficElement(scene, type, direction = 1, laneIndex = 0) {
 }
 
 function createSceneCard(scene, index) {
-  const metrics = getTrackMetrics(scene.track);
+  const routeTrack = getRouteTrack(scene);
+  const metrics = getTrackMetrics(routeTrack);
   const card = document.createElement('article');
   card.className = 'scene-card';
   card.dataset.sceneIndex = String(index);
@@ -586,9 +597,9 @@ function createSceneCard(scene, index) {
     <svg class="scene-card__frame" viewBox="0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}" preserveAspectRatio="none" aria-hidden="true"></svg>
     <svg class="scene-card__scene" viewBox="0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}" preserveAspectRatio="none" aria-hidden="true"></svg>
     <svg class="scene-card__overlay" viewBox="0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}" preserveAspectRatio="none" aria-hidden="true">
-      <path class="route-layer route-guide" d="${pointsToPath(scene.track)}"></path>
-      <circle class="route-start" cx="${scene.track[0][0]}" cy="${scene.track[0][1]}" r="12" fill="#8df0ff"></circle>
-      <circle class="route-end" cx="${scene.track[scene.track.length - 1][0]}" cy="${scene.track[scene.track.length - 1][1]}" r="12" fill="#58f0bc"></circle>
+      <path class="route-layer route-guide" d="${pointsToPath(routeTrack)}"></path>
+      <circle class="route-start" cx="${routeTrack[0][0]}" cy="${routeTrack[0][1]}" r="12" fill="#8df0ff"></circle>
+      <circle class="route-end" cx="${routeTrack[routeTrack.length - 1][0]}" cy="${routeTrack[routeTrack.length - 1][1]}" r="12" fill="#58f0bc"></circle>
       <path class="route-layer player-line" data-player-line d=""></path>
     </svg>
     <div class="collectibles"></div>
@@ -678,6 +689,14 @@ function createSceneCard(scene, index) {
     fill: `url(#water-${scene.id})`,
   }));
 
+  if (scene.shipWaterPath) {
+    sceneSvg.appendChild(createSvgNode('path', {
+      d: scene.shipWaterPath,
+      fill: `url(#water-${scene.id})`,
+      opacity: '0.94',
+    }));
+  }
+
   sceneSvg.appendChild(createSvgNode('path', {
     d: scene.shorePath,
     fill: 'none',
@@ -712,7 +731,7 @@ function createSceneCard(scene, index) {
   }));
 
   const shine = createSvgNode('path', {
-    d: scene.trackToShine || scene.track.map((point, pointIndex) => `${pointIndex === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`).join(' '),
+    d: scene.trackToShine || routeTrack.map((point, pointIndex) => `${pointIndex === 0 ? 'M' : 'L'} ${point[0]} ${point[1]}`).join(' '),
     fill: 'none',
     stroke: 'rgba(255,255,255,0.12)',
     'stroke-width': 24,
@@ -753,9 +772,14 @@ function createSceneCard(scene, index) {
     collectiblesLayer.appendChild(button);
   }
 
-  const carCount = 1 + Math.floor(Math.random() * 3);
-  for (let carIndex = 0; carIndex < carCount; carIndex += 1) {
-    hazardsLayer.appendChild(createTrafficElement(scene, 'car', carIndex === 0 ? 1 : -1, carIndex));
+  const leftLaneCarCount = 1 + Math.floor(Math.random() * 3);
+  for (let carIndex = 0; carIndex < leftLaneCarCount; carIndex += 1) {
+    hazardsLayer.appendChild(createTrafficElement(scene, 'car', 1, carIndex, 'left'));
+  }
+
+  const rightLaneCarCount = 1 + Math.floor(Math.random() * 3);
+  for (let carIndex = 0; carIndex < rightLaneCarCount; carIndex += 1) {
+    hazardsLayer.appendChild(createTrafficElement(scene, 'car', -1, carIndex, 'right'));
   }
 
   const shipCount = 1 + Math.floor(Math.random() * 3);
