@@ -1,16 +1,16 @@
 :root {
   color-scheme: dark;
-  --bg-0: #05111f;
-  --bg-1: #071a2c;
-  --bg-2: #0b2d4a;
-  --panel: rgba(7, 20, 34, 0.76);
-  --panel-strong: rgba(4, 12, 22, 0.88);
+  --bg-0: #07131f;
+  --bg-1: #0a2234;
+  --bg-2: #123d59;
+  --panel: rgba(7, 22, 34, 0.74);
+  --panel-strong: rgba(4, 14, 24, 0.88);
   --line: rgba(141, 227, 255, 0.22);
-  --text: #eff8ff;
-  --muted: #aac8df;
-  --primary: #35c8ff;
-  --primary-2: #0a96e6;
-  --accent: #8df0ff;
+  --text: #f5fbff;
+  --muted: #b5d2e4;
+  --primary: #2fc2f0;
+  --primary-2: #1495d9;
+  --accent: #ff8f3d;
   --warning: #ff885f;
   --success: #58f0bc;
   --shadow: 0 28px 70px rgba(0, 0, 0, 0.34);
@@ -18,8 +18,8 @@
   --radius-lg: 24px;
   --radius-md: 18px;
   --radius-sm: 12px;
-  --font-display: "Space Grotesk", "Trebuchet MS", "Segoe UI", sans-serif;
-  --font-body: "Space Grotesk", "Trebuchet MS", "Segoe UI", sans-serif;
+  --font-display: "Avenir Next", "Avenir", "Helvetica Neue", "Segoe UI", sans-serif;
+  --font-body: "Avenir Next", "Avenir", "Helvetica Neue", "Segoe UI", sans-serif;
 }
 
 * {
@@ -147,6 +147,22 @@ button {
 .hud__chip strong {
   font-size: 1.25rem;
   font-variant-numeric: tabular-nums;
+}
+
+.hud__chip--select {
+  padding: 10px 14px 9px;
+}
+
+.hud__chip--select select {
+  width: 100%;
+  margin-top: 4px;
+  border: 0;
+  outline: none;
+  color: var(--text);
+  background: transparent;
+  font-weight: 800;
+  padding: 0;
+  appearance: none;
 }
 
 .button {
@@ -682,6 +698,61 @@ button {
   justify-content: center;
 }
 
+.site-footer {
+  margin-top: 18px;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(6, 18, 30, 0.76);
+  border: 1px solid rgba(141, 227, 255, 0.16);
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: var(--shadow);
+}
+
+.site-footer__eyebrow {
+  margin: 0 0 4px;
+  color: var(--accent);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.site-footer__copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+.site-footer__links {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(11, 36, 58, 0.95);
+  border: 1px solid rgba(141, 227, 255, 0.16);
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+
+.site-footer__links a:hover {
+  transform: translateY(-1px);
+  background: rgba(17, 51, 78, 0.98);
+  border-color: rgba(255, 143, 61, 0.32);
+}
+
 .confetti-piece {
   position: absolute;
   top: -12px;
@@ -693,6 +764,30 @@ button {
   opacity: 0.96;
   animation: confettiFall var(--duration) linear forwards;
   transform: translate3d(0, 0, 0) rotate(var(--turn));
+}
+
+.milestone-badge {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  z-index: 7;
+  max-width: min(84%, 420px);
+  padding: 12px 14px;
+  border-radius: 18px;
+  background: rgba(4, 14, 24, 0.82);
+  border: 1px solid rgba(255, 143, 61, 0.26);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  animation: floatUp 2.2s ease forwards;
+}
+
+.milestone-badge strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--accent);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-size: 0.75rem;
 }
 
 @keyframes bob {
@@ -789,6 +884,20 @@ button {
 
   .hud__chip,
   .button--ghost {
+    flex: 1 1 160px;
+  }
+
+  .site-footer {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .site-footer__links {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .site-footer__links a {
     flex: 1 1 160px;
   }
 }

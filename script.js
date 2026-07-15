@@ -3,6 +3,8 @@ const bubbleLayer = document.getElementById('bubbleLayer');
 const scoreValue = document.getElementById('scoreValue');
 const dropValue = document.getElementById('dropValue');
 const levelValue = document.getElementById('levelValue');
+const timeValue = document.getElementById('timeValue');
+const difficultySelect = document.getElementById('difficultySelect');
 const statusText = document.getElementById('statusText');
 const routeProgress = document.getElementById('routeProgress');
 const resetBtn = document.getElementById('resetBtn');
@@ -10,6 +12,7 @@ const victoryOverlay = document.getElementById('victoryOverlay');
 const victoryCopy = document.getElementById('victoryCopy');
 const playAgainBtn = document.getElementById('playAgainBtn');
 const gameStage = document.getElementById('gameStage');
+const bubbleLayerRoot = document.getElementById('bubbleLayer');
 
 const VIEWBOX_WIDTH = 1000;
 const VIEWBOX_HEIGHT = 700;
@@ -17,6 +20,38 @@ const START_THRESHOLD = 44;
 const END_THRESHOLD = 56;
 const CORRIDOR_THRESHOLD = 42;
 const FAILURE_LIMIT = 3;
+
+const difficultyModes = {
+  easy: {
+    label: 'Easy',
+    timeLimit: 180,
+    corridorScale: 1.18,
+    failureLimit: 4,
+    scoreMultiplier: 0.9,
+  },
+  normal: {
+    label: 'Normal',
+    timeLimit: 130,
+    corridorScale: 1,
+    failureLimit: 3,
+    scoreMultiplier: 1,
+  },
+  hard: {
+    label: 'Hard',
+    timeLimit: 95,
+    corridorScale: 0.82,
+    failureLimit: 2,
+    scoreMultiplier: 1.18,
+  },
+};
+
+const milestoneRules = [
+  { score: 18, title: 'First flow', message: 'Your first clean stretch is making a visible difference.' },
+  { score: 40, title: 'Momentum', message: 'Momentum is building. The shoreline is holding.' },
+  { score: 75, title: 'Halfway help', message: 'You are turning safe water into a real chain reaction.' },
+  { score: 110, title: 'Impact run', message: 'This run is delivering serious clean water protection.' },
+  { score: 150, title: 'Mission focus', message: 'The final stretch is within reach. Stay precise.' },
+];
 
 const carVariants = [
   { id: 'sedan', color: '#ff7b59', accent: '#c93d3a', glass: '#8fc7ea' },
@@ -299,6 +334,10 @@ const state = {
   score: 0,
   drops: 0,
   activeSceneIndex: 0,
+  difficulty: 'normal',
+  timeRemaining: difficultyModes.normal.timeLimit,
+  timerHandle: null,
+  gameStarted: false,
   drawing: false,
   pointerId: null,
   currentStrokePoints: [],
@@ -308,7 +347,10 @@ const state = {
   activeSceneElement: null,
   activeLinePath: null,
   completed: false,
+  failed: false,
   confettiTimer: null,
+  audioContext: null,
+  firedMilestones: [],
 };
 
 function clamp(value, min, max) {
@@ -377,6 +419,109 @@ function formatScore(value) {
   return Math.max(0, Math.round(value));
 }
 
+function formatTime(seconds) {
+  const safeSeconds = Math.max(0, Math.ceil(seconds));
+  const minutes = Math.floor(safeSeconds / 60);
+  const remainder = safeSeconds % 60;
+  return `${minutes}:${String(remainder).padStart(2, '0')}`;
+}
+
+function getDifficultyConfig() {
+  return difficultyModes[state.difficulty] ?? difficultyModes.normal;
+}
+
+function getCorridorThreshold() {
+  return CORRIDOR_THRESHOLD * getDifficultyConfig().corridorScale;
+}
+
+function getFailureLimit() {
+  return getDifficultyConfig().failureLimit;
+}
+
+function getTimeLimit() {
+  return getDifficultyConfig().timeLimit;
+}
+
+function getScoreMultiplier() {
+  return getDifficultyConfig().scoreMultiplier;
+}
+
+function ensureAudio() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) {
+    return null;
+  }
+
+  if (!state.audioContext) {
+    state.audioContext = new AudioContextClass();
+  }
+
+  if (state.audioContext.state === 'suspended') {
+    state.audioContext.resume();
+  }
+
+  return state.audioContext;
+}
+
+function playTone(frequency, duration, type = 'sine', gainValue = 0.08, delay = 0) {
+  const audioContext = ensureAudio();
+  if (!audioContext) {
+    return;
+  }
+
+  const oscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  oscillator.type = type;
+  oscillator.frequency.value = frequency;
+  gain.gain.value = 0;
+  oscillator.connect(gain);
+  gain.connect(audioContext.destination);
+  const startTime = audioContext.currentTime + delay;
+  gain.gain.linearRampToValueAtTime(gainValue, startTime + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+  oscillator.start(startTime);
+  oscillator.stop(startTime + duration + 0.02);
+}
+
+function playActionSound(kind) {
+  if (kind === 'collect') {
+    playTone(660, 0.09, 'triangle', 0.06);
+    playTone(880, 0.11, 'triangle', 0.05, 0.05);
+    return;
+  }
+
+  if (kind === 'miss') {
+    playTone(140, 0.22, 'sawtooth', 0.05);
+    playTone(92, 0.18, 'square', 0.035, 0.07);
+    return;
+  }
+
+  if (kind === 'win') {
+    playTone(523, 0.12, 'triangle', 0.06);
+    playTone(659, 0.12, 'triangle', 0.06, 0.08);
+    playTone(784, 0.16, 'triangle', 0.07, 0.16);
+  }
+}
+
+function showMilestoneMessage(score) {
+  for (const milestone of milestoneRules) {
+    if (state.firedMilestones.includes(milestone.score)) {
+      continue;
+    }
+
+    if (score >= milestone.score) {
+      state.firedMilestones.push(milestone.score);
+      const badge = document.createElement('div');
+      badge.className = 'milestone-badge';
+      badge.innerHTML = `<strong>${milestone.title}</strong><span>${milestone.message}</span>`;
+      bubbleLayerRoot.appendChild(badge);
+      window.setTimeout(() => badge.remove(), 2300);
+      pulseStatus(milestone.message);
+      break;
+    }
+  }
+}
+
 function getCollectiblePositions(scene) {
   const anchors = [1, 3, 5, 7];
   return anchors
@@ -408,6 +553,7 @@ function updateHUD() {
   scoreValue.textContent = formatScore(state.score);
   dropValue.textContent = formatScore(state.drops);
   levelValue.textContent = `${Math.min(state.activeSceneIndex + 1, scenes.length)} / ${scenes.length}`;
+  timeValue.textContent = formatTime(state.timeRemaining);
 }
 
 function updateProgress(progressRatio) {
@@ -415,9 +561,11 @@ function updateProgress(progressRatio) {
 }
 
 function award(points, drops = 0, x = 0, y = 0, message = '') {
-  state.score += points;
+  const adjustedPoints = points * getScoreMultiplier();
+  state.score += adjustedPoints;
   state.drops += drops;
   updateHUD();
+  showMilestoneMessage(state.score);
   if (message) {
     showBubble(message, x, y, points >= 0 ? 'gain' : 'loss');
   }
@@ -746,6 +894,7 @@ function createSceneCard(scene, index) {
       }
       button.classList.add('is-collected');
       const rect = button.getBoundingClientRect();
+      playActionSound('collect');
       award(3, 1, rect.left + rect.width / 2, rect.top - 6, '+3');
       pulseStatus('Collected a can. The shoreline just got a little cleaner.');
       checkSceneCompletionState();
@@ -886,8 +1035,58 @@ function clearStroke(card) {
   updateProgress(0);
 }
 
+function startTimer() {
+  stopTimer();
+  state.timeRemaining = getTimeLimit();
+  updateHUD();
+  state.timerHandle = window.setInterval(() => {
+    if (state.completed || state.failed) {
+      stopTimer();
+      return;
+    }
+
+    state.timeRemaining -= 1;
+    if (state.timeRemaining <= 0) {
+      state.timeRemaining = 0;
+      updateHUD();
+      stopTimer();
+      endGame(false, 'Time ran out before the clean-water route was finished.');
+      return;
+    }
+
+    updateHUD();
+  }, 1000);
+}
+
+function stopTimer() {
+  if (state.timerHandle) {
+    window.clearInterval(state.timerHandle);
+    state.timerHandle = null;
+  }
+}
+
+function endGame(isWin, message) {
+  state.completed = Boolean(isWin);
+  state.failed = !isWin;
+  stopTimer();
+  if (isWin) {
+    playActionSound('win');
+    finishGame();
+    return;
+  }
+
+  playActionSound('miss');
+  victoryCopy.textContent = message;
+  victoryOverlay.classList.remove('is-hidden');
+  victoryOverlay.setAttribute('aria-hidden', 'false');
+  victoryOverlay.querySelector('.victory-card__eyebrow').textContent = 'Run over';
+  victoryOverlay.querySelector('h2').textContent = 'The water line broke down.';
+  playAgainBtn.textContent = 'Try again';
+  pulseStatus(message);
+}
+
 function beginDrawing(event) {
-  if (state.completed) {
+  if (state.completed || state.failed) {
     return;
   }
 
@@ -913,11 +1112,13 @@ function beginDrawing(event) {
   const startDistance = distance(point, startPoint);
   if (startDistance > START_THRESHOLD) {
     pulseStatus('Start near the glowing bead at the beginning of the route.');
+    playActionSound('miss');
     return;
   }
 
   state.drawing = true;
   state.pointerId = event.pointerId ?? null;
+  state.gameStarted = true;
   state.currentStrokePoints = [[point.x, point.y]];
   state.currentStrokeDistance = 0;
   state.currentStrokeError = 0;
@@ -955,10 +1156,12 @@ function extendDrawing(event) {
   state.currentStrokeError = state.currentStrokeError * 0.92 + projected.distance * 0.08;
   card.bestDistance = Math.min(card.bestDistance, projected.distance);
 
-  if (projected.distance > CORRIDOR_THRESHOLD * 1.18) {
+  const corridorLimit = getCorridorThreshold();
+  if (projected.distance > corridorLimit) {
     card.error += 1;
-    if (card.error >= FAILURE_LIMIT) {
+    if (card.error >= getFailureLimit()) {
       pulseStatus('The line touched polluted water. Lift and try again.');
+      playActionSound('miss');
       finishDrawing(false);
       return;
     }
@@ -1005,7 +1208,7 @@ function finishDrawing(shouldCheckCompletion = true) {
   const endGap = distance(last, endPoint);
   const endNearRoute = projectedEnd.distance < END_THRESHOLD;
   const goodCoverage = progressRatio >= 0.92;
-  const safeLine = averageError <= CORRIDOR_THRESHOLD * 0.95;
+  const safeLine = averageError <= getCorridorThreshold() * 0.95;
   const startCorrect = startGap <= START_THRESHOLD;
   const endCorrect = endGap <= END_THRESHOLD;
 
@@ -1015,12 +1218,14 @@ function finishDrawing(shouldCheckCompletion = true) {
     const reward = card.scene.baseReward + collectibleBonus * 2;
     award(reward, 2 + collectibleBonus, last.x, last.y, `+${reward}`);
     pulseStatus(`${card.scene.name} sealed. The safe water line is holding.`);
+    playActionSound('collect');
     card.completionTriggered = true;
     window.setTimeout(() => advanceScene(), 650);
     return;
   }
 
   pulseStatus('The route needs a cleaner blue line. Try again and stay inside the glowing path.');
+  playActionSound('miss');
   clearStroke(card);
 }
 
@@ -1074,6 +1279,7 @@ function advanceScene() {
 
 function finishGame() {
   state.completed = true;
+  state.failed = false;
   updateProgress(1);
   const bonus = 20;
   state.score += bonus;
@@ -1083,6 +1289,7 @@ function finishGame() {
   victoryOverlay.classList.remove('is-hidden');
   victoryOverlay.setAttribute('aria-hidden', 'false');
   pulseStatus('Victory. The final bay is protected.');
+  showMilestoneMessage(state.score);
   launchConfetti();
 }
 
@@ -1121,12 +1328,19 @@ function resetRun() {
     state.confettiTimer = null;
   }
 
+  stopTimer();
+
   bubbleLayer.innerHTML = '';
   victoryOverlay.classList.add('is-hidden');
   victoryOverlay.setAttribute('aria-hidden', 'true');
+  victoryOverlay.querySelector('.victory-card__eyebrow').textContent = 'Mission complete';
+  victoryOverlay.querySelector('h2').textContent = 'Every water body is protected.';
+  playAgainBtn.textContent = 'Play again';
   state.score = 0;
   state.drops = 0;
   state.activeSceneIndex = 0;
+  state.timeRemaining = getTimeLimit();
+  state.gameStarted = false;
   state.drawing = false;
   state.pointerId = null;
   state.currentStrokePoints = [];
@@ -1134,10 +1348,25 @@ function resetRun() {
   state.currentStrokeError = 0;
   state.currentStrokeMaxProgress = 0;
   state.completed = false;
+  state.failed = false;
+  state.firedMilestones = [];
   renderScenes();
   updateHUD();
   updateProgress(0);
   pulseStatus('Trace the blue safety line and click the floating cans to collect extra points.');
+  startTimer();
+}
+
+function applyDifficulty(difficulty) {
+  state.difficulty = difficultyModes[difficulty] ? difficulty : 'normal';
+  resetRun();
+}
+
+function tickGameStart() {
+  if (state.gameStarted || state.completed || state.failed) {
+    return;
+  }
+  startTimer();
 }
 
 gameStage.addEventListener('pointerdown', beginDrawing);
@@ -1151,9 +1380,13 @@ gameStage.addEventListener('pointerleave', () => {
 });
 resetBtn.addEventListener('click', resetRun);
 playAgainBtn.addEventListener('click', resetRun);
+difficultySelect.addEventListener('change', (event) => applyDifficulty(event.target.value));
+
+window.addEventListener('pointerdown', tickGameStart, { once: true });
 
 renderScenes();
 updateHUD();
 window.requestAnimationFrame(animateTraffic);
 updateProgress(0);
-pulseStatus('Trace the blue safety line and click the floating cans to collect extra points.');
+pulseStatus('Choose a difficulty, trace the blue safety line, and click the floating cans to collect extra points.');
+startTimer();
